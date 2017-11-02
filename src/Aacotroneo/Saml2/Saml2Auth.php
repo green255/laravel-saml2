@@ -154,4 +154,13 @@ class Saml2Auth
     function getLastErrorReason() {
         return $this->auth->getLastErrorReason();
     }
+    
+    /** 
+     * Expose the XML Response
+     * @return string
+     */
+    public function getLastResponse()
+    {
+        return $this->auth->getLastResponseXML();
+    }
 }
