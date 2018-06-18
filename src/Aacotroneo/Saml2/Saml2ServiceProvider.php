@@ -1,6 +1,7 @@
 <?php
 namespace Aacotroneo\Saml2;
 
+use OneLogin\Saml2\Auth;
 use OneLogin_Saml2_Auth;
 use URL;
 use Illuminate\Support\ServiceProvider;
@@ -31,7 +32,7 @@ class Saml2ServiceProvider extends ServiceProvider
         ]);
 
         if (config('saml2_settings.proxyVars', false)) {
-            \OneLogin_Saml2_Utils::setProxyVars(true);
+            \OneLogin\Saml2\Utils::setProxyVars(true);
         }
     }
 
@@ -75,7 +76,7 @@ class Saml2ServiceProvider extends ServiceProvider
                 $config['idp']['x509cert'] = $this->extractCertFromFile($config['idp']['x509cert']);
             }
 
-            return new OneLogin_Saml2_Auth($config);
+            return new Auth($config);
         });
     }
 

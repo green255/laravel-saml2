@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/aacotroneo/laravel-saml2.svg)](https://travis-ci.org/aacotroneo/laravel-saml2)
 
-[check https://github.com/aacotroneo/laravel-saml2/tree/remove_mcrypt for a mcrypt free version ]
+### this is a POC branch to remove mcrypt until everything is stable
 
 A Laravel package for Saml2 integration as a SP (service provider) based on  [OneLogin](https://github.com/onelogin/php-saml) toolkit, which is much lighter and easier to install than simplesamlphp SP. It doesn't need separate routes or session storage to work!
 
@@ -115,3 +115,4 @@ Note that for case 2, you may have to manually save your session to make the log
 
 
 That's it. Feel free to ask any questions, make PR or suggestions, or open Issues.
+>>>>>>> b7354c18734e1593dbd08b2f25cfff14ce023a5b
