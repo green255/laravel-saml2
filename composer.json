@@ -1,13 +1,13 @@
 {
-    "name": "aacotroneo/laravel-saml2",
+    "name": "green255/laravel-saml2",
     "description": "A Laravel package for Saml2 integration as a SP (service provider) based on OneLogin toolkit, which is much lightweight than simplesamlphp",
     "keywords": ["laravel","saml", "saml2", "onelogin"],
     "homepage": "https://github.com/aacotroneo/laravel-saml2",
     "license": "MIT",
-    "version": "0.11.1",
+    "version": "0.1.0",
     "authors": [
         {
-            "name": "aacotroneo",
+            "name": "green255",
             "email": "aacotroneo@gmail.com"
         }
     ],
@@ -15,10 +15,9 @@
         "php": ">=5.4.0",
         "ext-openssl": "*",
         "illuminate/support": ">=5.0.0",
-        "onelogin/php-saml": "^2.10"
+		"aacotroneo/laravel-saml2": "dev-remove_mcrypt"
     },
     "require-dev": {
-        "mockery/mockery": "0.9.*"
     },
     "autoload": {
         "psr-0": {
