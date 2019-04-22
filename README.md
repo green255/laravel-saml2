@@ -2,8 +2,6 @@
 
 [![Build Status](https://travis-ci.org/aacotroneo/laravel-saml2.svg)](https://travis-ci.org/aacotroneo/laravel-saml2)
 
-### this is a POC branch to remove mcrypt until everything is stable
-
 A Laravel package for Saml2 integration as a SP (service provider) based on  [OneLogin](https://github.com/onelogin/php-saml) toolkit, which is much lighter and easier to install than simplesamlphp SP. It doesn't need separate routes or session storage to work!
 
 The aim of this library is to be as simple as possible. We won't mess with Laravel users, auth, session...  We prefer to limit ourselves to a concrete task. Ask the user to authenticate at the IDP and process the response. Same case for SLO requests.
@@ -33,7 +31,7 @@ For older versions of Laravel (<5.5), you have to add the service provider and a
 ]
 ```
 
-Then publish the config file with `php artisan vendor:publish`. This will add the file `app/config/saml2_settings.php`. This config is handled almost directly by  [OneLogin](https://github.com/onelogin/php-saml) so you may get further references there, but will cover here what's really necessary. There are some other config about routes you may want to check, they are pretty straightforward.
+Then publish the config file with `php artisan vendor:publish --provider="Aacotroneo\Saml2\Saml2ServiceProvider"`. This will add the file `app/config/saml2_settings.php`. This config is handled almost directly by  [OneLogin](https://github.com/onelogin/php-saml) so you may get further references there, but will cover here what's really necessary. There are some other config about routes you may want to check, they are pretty straightforward.
 
 ### Configuration
 
@@ -76,6 +74,19 @@ When you want your user to login, just call `Saml2Auth::login()` or redirect to 
 	}
 ```
 
+Since Laravel 5.3, you can change your unauthenticated method in ```app/Exceptions/Handler.php```.
+```php
+protected function unauthenticated($request, AuthenticationException $exception)
+{
+	if ($request->expectsJson())
+        {
+            return response()->json(['error' => 'Unauthenticated.'], 401);
+        }
+
+        return Saml2Auth::login();
+}
+```
+
 The Saml2::login will redirect the user to the IDP and will came back to an endpoint the library serves at /saml2/acs. That will process the response and fire an event when ready. The next step for you is to handle that event. You just need to login the user or refuse.
 
 ```php
@@ -95,6 +106,38 @@ The Saml2::login will redirect the user to the IDP and will came back to an endp
         });
 
 ```
+### Auth persistence
+
+Becarefull about necessary Laravel middleware for Auth persistence in Session.
+
+For exemple, it can be:
+
+```
+# in App\Http\Kernel
+protected $middlewareGroups = [
+        'web' => [
+	    ...
+	],
+	'api' => [
+            ...
+        ],
+        'saml' => [
+            \App\Http\Middleware\EncryptCookies::class,
+            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+            \Illuminate\Session\Middleware\StartSession::class,
+        ],
+
+```
+
+And in `config/saml2_settings.php` :
+```
+    /**
+     * which middleware group to use for the saml routes
+     * Laravel 5.2 will need a group which includes StartSession
+     */
+    'routesMiddleware' => ['saml'],
+```
+
 ### Log out
 Now there are two ways the user can log out.
  + 1 - By logging out in your app: In this case you 'should' notify the IDP first so it closes global session.
@@ -115,4 +158,3 @@ Note that for case 2, you may have to manually save your session to make the log
 
 
 That's it. Feel free to ask any questions, make PR or suggestions, or open Issues.
->>>>>>> b7354c18734e1593dbd08b2f25cfff14ce023a5b

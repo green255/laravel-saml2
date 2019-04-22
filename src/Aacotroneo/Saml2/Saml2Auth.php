@@ -2,9 +2,9 @@
 
 namespace Aacotroneo\Saml2;
 
-use OneLogin\Saml2\Auth;
-use OneLogin\Saml2\Error;
-use OneLogin\Saml2\Utils;
+use OneLogin\Saml2\Auth as OneLogin_Saml2_Auth;
+use OneLogin\Saml2\Error as OneLogin_Saml2_Error;
+use OneLogin\Saml2\Utils as OneLogin_Saml2_Utils;
 use Aacotroneo\Saml2\Events\Saml2LogoutEvent;
 
 use Log;
@@ -20,7 +20,7 @@ class Saml2Auth
 
     protected $samlAssertion;
 
-    function __construct(Auth $auth)
+    function __construct(OneLogin_Saml2_Auth $auth)
     {
         $this->auth = $auth;
     }
@@ -81,16 +81,18 @@ class Saml2Auth
      * @param string|null $nameId              The NameID that will be set in the LogoutRequest.
      * @param string|null $sessionIndex        The SessionIndex (taken from the SAML Response in the SSO process).
      * @param string|null $nameIdFormat        The NameID Format will be set in the LogoutRequest.
+     * @param bool        $stay            True if we want to stay (returns the url string) False to redirect
+     * @param string|null $nameIdNameQualifier The NameID NameQualifier will be set in the LogoutRequest.
      *
      * @return string|null If $stay is True, it return a string with the SLO URL + LogoutRequest + parameters
      *
-     * @throws Error
+     * @throws OneLogin_Saml2_Error
      */
-    function logout($returnTo = null, $nameId = null, $sessionIndex = null, $nameIdFormat = null)
+    function logout($returnTo = null, $nameId = null, $sessionIndex = null, $nameIdFormat = null, $stay = false, $nameIdNameQualifier = null)
     {
         $auth = $this->auth;
 
-        $auth->logout($returnTo, [], $nameId, $sessionIndex, false, $nameIdFormat);
+        return $auth->logout($returnTo, [], $nameId, $sessionIndex, $stay, $nameIdFormat, $nameIdNameQualifier);
     }
 
     /**
@@ -159,7 +161,7 @@ class Saml2Auth
 
             throw new InvalidArgumentException(
                 'Invalid SP metadata: ' . implode(', ', $errors),
-                Error::METADATA_SP_INVALID
+                OneLogin_Saml2_Error::METADATA_SP_INVALID
             );
         }
     }
@@ -172,9 +174,8 @@ class Saml2Auth
     function getLastErrorReason() {
         return $this->auth->getLastErrorReason();
     }
-	
-	
-	/** 
+    
+    /** 
      * Expose the XML Response
      * @return string
      */
